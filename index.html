@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Service</title>
+</head>
+<body>
+  <h1>Weather Service</h1>
+  <!-- <h1>Please enter city name in order to get current weather and 7 days forecast </h1> -->
+  <form id="weatherForm">
+    <label for="city">Enter City Name:</label>
+    <input type="text" id="city" name="city" required>
+    <button type="submit">Get Weather</button>
+  </form>
+  <div id="Current Weather">
+  <h2>Current Weather  </h2>
+  </div>
+
+  <div id="7 days weather">
+    <h2> 7 days weather  </h2>
+   </div>
+    <script>
+    document.getElementById('weatherForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const city = document.getElementById('city').value;
+      const response = await fetch(`/api/forecast?city=${city}`);
+      const data = await response.json();
+      document.getElementById('Current Weather').innerHTML = `
+        <h2>Current Weather in ${city}</h2>
+        <p>Temperature: ${data.current_weather.temperature}°C</p>
+        <p>Precipitation: ${data.daily.precipitation_sum[0]} mm</p>
+        <p>Max Temperature: ${data.daily.temperature_2m_max[0]}°C</p>
+        <p>Min Temperature: ${data.daily.temperature_2m_min[0]}°C</p>
+      `;
+
+      let weatherHTML = `<h2>7-Day Weather Forecast in ${city}</h2>`;
+    for (let i = 0; i < 7; i++) {
+      weatherHTML += `
+        <h3>Day ${data.daily.time[i]}</h3>
+        <p>Temperature: ${data.daily.temperature_2m_max[i]}°C / ${data.daily.temperature_2m_min[i]}°C</p>
+        <p>Precipitation: ${data.daily.precipitation_sum[i]} mm</p>
+      `;
+    }
+    document.getElementById('7 days weather').innerHTML = weatherHTML;
+    });
+  </script>
+
+
+</body>
+</html>
